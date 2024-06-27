@@ -12,7 +12,7 @@ services:
     env_file:
       - ../../.env
     ports:
-      - 8090:8080
-      - 40190:40000
+      - "${HTTP_EXTERNAL_PORT}:8080"
+      - "${DELVE_EXTERNAL_PORT}:40000"
     volumes:
       - ./../../:/go/src/app
