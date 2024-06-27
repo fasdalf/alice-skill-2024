@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  cli:
+    build:
+      target: local_app
+      dockerfile: cli/Dockerfile
+      args:
+        DOCKER_BUILDKIT: 1
+    container_name: alice-skill-2024
+    tty: true
+    stdin_open: true
+    env_file:
+      - ../../.env
+    ports:
+      - 8090:8080
+      - 40190:40000
+    volumes:
+      - ./../../:/go/src/app
