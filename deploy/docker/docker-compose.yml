@@ -6,7 +6,7 @@ services:
       dockerfile: cli/Dockerfile
       args:
         DOCKER_BUILDKIT: 1
-    container_name: alice-skill-2024
+    container_name: "${COMPOSE_PROJECT_NAME}_cli"
     tty: true
     stdin_open: true
     env_file:
