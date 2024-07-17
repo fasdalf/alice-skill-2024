@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/fasdalf/alice-skill-2024/internal/logger"
+	"go.uber.org/zap"
 )
 
 // функция main вызывается автоматически при запуске приложения
@@ -17,8 +19,13 @@ func main() {
 
 // функция run будет полезна при инициализации зависимостей сервера перед запуском
 func run() error {
-	fmt.Println("Running server on", flagRunAddr)
-	return http.ListenAndServe(flagRunAddr, http.HandlerFunc(webhook))
+	if err := logger.Initialize(flagLogLevel); err != nil {
+		return err
+	}
+
+	logger.Log.Info("Running server", zap.String("address", flagRunAddr))
+	// оборачиваем хендлер webhook в middleware с логированием
+	return http.ListenAndServe(flagRunAddr, logger.RequestLogger(webhook))
 }
 
 // функция webhook — обработчик HTTP-запроса
