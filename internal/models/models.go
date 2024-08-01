@@ -5,16 +5,23 @@ const (
 )
 
 // Request описывает запрос пользователя.
-// см. https://yandex.ru/dev/dialogs/alice/doc/request.html
+// См. https://yandex.ru/dev/dialogs/alice/doc/request.html
 type Request struct {
-	Request SimpleUtterance `json:"request"`
-	Version string          `json:"version"`
+	// тут будет, например, строка "Europe/Moscow" для часового пояса Москвы
+	Timezone string          `json:"timezone"`
+	Request  SimpleUtterance `json:"request"`
+	Session  Session         `json:"session"`
+	Version  string          `json:"version"`
 }
 
 // SimpleUtterance описывает команду, полученную в запросе типа SimpleUtterance.
 type SimpleUtterance struct {
 	Type    string `json:"type"`
 	Command string `json:"command"`
+}
+
+type Session struct {
+	New bool `json:"new"`
 }
 
 // Response описывает ответ сервера.
