@@ -21,7 +21,8 @@ type SimpleUtterance struct {
 }
 
 type Session struct {
-	New bool `json:"new"`
+	New    bool   `json:"new"`
+	UserID string `json:"user_id"`
 }
 
 // Response описывает ответ сервера.
