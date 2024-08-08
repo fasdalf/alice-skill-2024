@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fasdalf/alice-skill-2024/internal/store"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 // Store реализует интерфейс store.Store и позволяет взаимодействовать с СУБД PostgreSQL
