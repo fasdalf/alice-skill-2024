@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -112,6 +113,28 @@ func (a *app) webhook(w http.ResponseWriter, r *http.Request) {
 			text = fmt.Sprintf("Сообщение от %s, отправлено %s: %s", message.Sender, message.Time, message.Payload)
 		}
 
+	// пользователь хочет зарегистрироваться
+	case strings.HasPrefix(req.Request.Command, "Зарегистрируй"):
+		// гипотетическая функция parseRegisterCommand вычленит из запроса
+		// желаемое имя нового пользователя
+		username := parseRegisterCommand(req.Request.Command)
+
+		// регистрируем пользователя
+		err := a.store.RegisterUser(ctx, req.Session.UserID, username)
+		// наличие неспецифичной ошибки
+		if err != nil && !errors.Is(err, store.ErrConflict) {
+			logger.Log.Debug("cannot register user", zap.Error(err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		// определяем правильное ответное сообщение пользователю
+		text = fmt.Sprintf("Вы успешно зарегистрированы под именем %s", username)
+		if errors.Is(err, store.ErrConflict) {
+			// ошибка специфична для случая конфликта имён пользователей
+			text = "Извините, такое имя уже занято. Попробуйте другое."
+		}
+
 	// если не поняли команду, просто скажем пользователю, сколько у него новых сообщений
 	default:
 		messages, err := a.store.ListMessages(ctx, req.Session.UserID)
@@ -162,6 +185,11 @@ func (a *app) webhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	logger.Log.Debug("sending HTTP 200 response")
+}
+
+// stub
+func parseRegisterCommand(command string) string {
+	return "fakeUser"
 }
 
 // stub
